@@ -74,6 +74,7 @@ def main():
 	textBox = utilityClasses.TextBox()
 
 	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+	print 'epple'
 	while True:
 		# Main game loop
 		pygame.event.pump() # Get stuff from keyboard and stuff
