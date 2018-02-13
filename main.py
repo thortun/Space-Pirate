@@ -7,7 +7,7 @@ import utilities as u
 import classes
 import utilityClasses as uC
 
-import cfg # Terrible way to do it apparently
+import cfg # All global variables and stuff
 
 def handleScrolling(mouseButtonsPressed, scrollObj):
 	"""Handles scrolling and sets global offset variables."""
@@ -25,13 +25,16 @@ def handleScrolling(mouseButtonsPressed, scrollObj):
 def makeSystem():
 	"""Makes a little planet system."""
 	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
 			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
+			#classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			#classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
 
 def draw():
 	"""Draw phase of the game."""
 	cfg.DISPLAYSURF.blit(cfg.IMAGESDICT['space'], pygame.Rect((0 + cfg.OFFSETX/20, 0 + cfg.OFFSETY/20), (100, 100))) # Get a smooth backdrop
+	# Draw center of screen
+	pygame.draw.circle(cfg.DISPLAYSURF, (255, 0, 0), cfg.SCREENCENTER, 2)
+	# cfg.DISPLAYSURF, self.color, drawPosition, int(cfg.ZOOM*self.rect.width/2)
 
 def initializeModules():
 	"""Initiazlises the modules we are going to use."""
@@ -63,7 +66,7 @@ def main():
 	clickedObject = None
 	textBox = uC.TextBox()
 
-	clearScreen()
+	clearScreen() # Shitty way to clear cmd
 
 	while True:
 		# Main game loop
@@ -84,9 +87,33 @@ def main():
 				# If we press the mouse and we are not scrolling,
 				# make a rect object to check what we clicked
 				if event.button is 1: # Left click
-					clickedObject = clickObj.click(event.pos)
-				if event.button is 2: # Right click
+					None
+					# clickedObject = clickObj.click(event.pos)
+				if event.button is 3: # Right click
+					cfg.ZOOM = 1
 					clickedObj = None
+					cfg.OFFSETX, cfg.OFFSETY = 0, 0
+
+				# Button 4 is scrolling backwards
+				# Button 5 is scrolling forwards
+				if event.button is 4:
+					# Zoom the camera
+					cfg.ZOOM = cfg.ZOOM*1.2
+					# Move the planets
+					for planet in clickObj.objectList:
+						moveVector = pygame.math.Vector2(cfg.SCREENCENTER[0] - planet.rect.center[0] - cfg.OFFSETX, cfg.SCREENCENTER[1] - planet.rect.center[1] - cfg.OFFSETX)
+						moveVector.normalize()
+						planet.move(moveVector)
+
+				if event.button is 5:
+					# Zoom the camera
+					cfg.ZOOM = cfg.ZOOM/1.2
+					# Move the planets
+
+
+			if event.type is MOUSEBUTTONUP:
+				if event.button is 1 and not scrollObj: # Left click release
+					clickedObject = clickObj.click(event.pos)
 
 		# Handle scrolling
 		handleScrolling(mouseButtonsPressed, scrollObj)
@@ -108,12 +135,20 @@ def main():
 		
 			planet.draw() # Draw all the planets
 
+		# Draw lines from center to planet
+		# line(Surface, color, start_pos, end_pos, width=1)
+		for planet in clickObj.objectList:
+			pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), (cfg.SCREENCENTER[0] , cfg.SCREENCENTER[1] )\
+				, (planet.rect.center[0] + cfg.OFFSETX, planet.rect.center[1] + cfg.OFFSETY), 2)
+
+
 		# Draw info box
 		# clickedObject = None
 
 		textBox.draw()
 		#________LAST PART OF CYCLE________
 		# Reset the click
+
 		clickRect.isActive = False
 
 		pygame.display.update()
