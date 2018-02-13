@@ -33,6 +33,10 @@ class Planet(CelestialObject):
 		drawPosition = (int(self.rect.center[0] + OFFSETX), int(self.rect.center[1] + OFFSETY))
 		pygame.draw.circle(surface, self.color, drawPosition, self.rect.width/2)
 
+	def click(self):
+		"""Click on a planet."""
+		print "Clicked on ", self
+
 class Star(CelestialObject):
 	"""Star class."""
 	def __init__(self, rect = pygame.Rect(0, 0, 0, 0)):
