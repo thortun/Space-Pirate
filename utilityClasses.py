@@ -61,13 +61,13 @@ class TextBox():
 	"""Textbox class to display information."""
 	def __init__(self, text = '', pos = pygame.Rect(0, 0, 0, 0)):
 		self.text = text
-		self.font = pygame.font.Font(None, 20) # Font
+		self.font = pygame.font.Font(None, 25) # Font
 		self.pos = pos
 
 	def draw(self, surface, OFFSETX, OFFSETY):
 		"""Draws the textbox to the surface."""
 		drawPosition = (self.pos.x + OFFSETX, self.pos.y + OFFSETY) 
-		surface.blit(self.font.render(self.text, 0, (200, 0, 0)), drawPosition) # Blits the text to the surface
+		surface.blit(self.font.render(self.text, 0, (200, 200, 200)), drawPosition) # Blits the text to the surface
 
 class Clickable():
 	"""Class of clickable objects."""
@@ -78,8 +78,11 @@ class Clickable():
 		"""Returns the object that we clicked on
 		when clicking on mousePosition.
 		 - mousePosition should be a touple
+		 - Returns the object clicked, and None if nothing was clicked
 		"""
 		clickRect = ClickRect(pygame.Rect(mousePosition, (10, 10))) # Create a click object
 		for obj in self.objectList:
 			if not clickRect.rect.collidelist([obj.rect]):
 				return obj
+		return None
+

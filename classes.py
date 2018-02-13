@@ -1,8 +1,9 @@
 # Python classes for Space Pirate
 import pygame
-import utilities as u
-
 import random
+
+import utilities as u
+import utilityClasses as uC
 
 class Entity():
 	"""Abstract entity class."""
@@ -32,6 +33,10 @@ class Planet(CelestialObject):
 		"""Draws the planet to the surface."""
 		drawPosition = (int(self.rect.center[0] + OFFSETX), int(self.rect.center[1] + OFFSETY))
 		pygame.draw.circle(surface, self.color, drawPosition, self.rect.width/2)
+
+	def click(self):
+		"""Click on a planet."""
+		print "Clicked on ", self
 
 class Star(CelestialObject):
 	"""Star class."""

@@ -4,7 +4,8 @@ import time
 import random
 
 import utilities as u
-import classes, utilityClasses
+import classes
+import utilityClasses as uC
 
 # Global variables
 
@@ -41,6 +42,10 @@ def initializeModules():
 	if not pygame.font.get_init():
 		print 'pygame.font failed to initialize'
 
+def clearScreen():
+	"""Clear the screen xD"""
+	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+
 def main():
 	global DISPLAYSURF, IMAGESDICT, FPS, OFFSETX, OFFSETY
 	FPS = 60
@@ -63,18 +68,18 @@ def main():
 	pygame.display.set_caption('Space Pirates') # Make name for window
 
 	# Make some general instances of stuff
-	scrollObj = utilityClasses.MouseScroll() # Make a mouse-scroll instance
+	scrollObj = uC.MouseScroll() # Make a mouse-scroll instance
 
-	clickRect = utilityClasses.ClickRect() # Rect to check what we are clicking
+	clickRect = uC.ClickRect() # Rect to check what we are clicking
 
 	planets = makeSystem()
-	clickObj = utilityClasses.Clickable(planets)
+	clickObj = uC.Clickable(planets)
 
 	clickedObject = None
-	textBox = utilityClasses.TextBox()
+	textBox = uC.TextBox()
 
-	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
-	print 'epple'
+	clearScreen()
+
 	while True:
 		# Main game loop
 		pygame.event.pump() # Get stuff from keyboard and stuff
@@ -93,32 +98,33 @@ def main():
 			if event.type is MOUSEBUTTONDOWN:
 				# If we press the mouse and we are not scrolling,
 				# make a rect object to check what we clicked
-				if event.button is 1 and not scrollObj:
-					clickObj.click(event.pos)
-					clickRect.isActive = True # Activate the object
-					clickRect.rect = pygame.Rect((0, 0), (10, 10)) # Update the rect variable of the object
-					clickRect.rect.center = (event.pos[0] - OFFSETX, event.pos[1] - OFFSETY) # Center the rect
+				if event.button is 1: # Left click
+					clickedObject = clickObj.click(event.pos)
+				if event.button is 2: # Right click
+					clickedObj = None
 
 		# Handle scrolling
 		handleScrolling(mouseButtonsPressed, scrollObj)
 
 		# ________UPDATE GAME STATE________
 		pygame.mouse.get_rel() 	# Update scroll object
+		if clickedObject is not None:
+			clickedObject.click()
+		# Reset the click
+		clickedObject = None
 
 		# ________DRAW PHASE________
 		draw()
 
-		somethingClicked = False
 		for planet in planets:
 			if (not clickRect.rect.collidelist([planet])) and clickRect:
-				textBox = utilityClasses.TextBox(planet.name, pygame.Rect(planet.rect))
+				textBox = uC.TextBox(planet.name, pygame.Rect(planet.rect))
 				clickedObject = planet
-				somethingClicked = True
 		
 			planet.draw(DISPLAYSURF, OFFSETX, OFFSETY) # Draw all the planets
 
 		# Draw info box
-		clickedObject = None
+		# clickedObject = None
 
 		textBox.draw(DISPLAYSURF, OFFSETX, OFFSETY)
 		#________LAST PART OF CYCLE________
