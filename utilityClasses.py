@@ -83,7 +83,7 @@ class Clickable():
 		 - mousePosition should be a touple
 		 - Returns the object clicked, and None if nothing was clicked
 		"""
-		clickRect = ClickRect(pygame.Rect(mousePosition, (10, 10))) # Create a click object
+		clickRect = ClickRect(pygame.Rect((mousePosition[0] - cfg.OFFSETX, mousePosition[1] - cfg.OFFSETY), (10, 10))) # Create a click object
 		for obj in self.objectList:
 			if not clickRect.rect.collidelist([obj.rect]):
 				return obj

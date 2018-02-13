@@ -12,7 +12,6 @@ import cfg # Terrible way to do it apparently
 def handleScrolling(mouseButtonsPressed, scrollObj):
 	"""Handles scrolling and sets global offset variables."""
 	# Scroll if we need to
-	global OFFSETX, OFFSETY
 	if mouseButtonsPressed[0]:
 		scrollObj.update(pygame.math.Vector2(pygame.mouse.get_rel()))
 	else:
