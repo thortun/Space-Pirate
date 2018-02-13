@@ -4,7 +4,8 @@ import time
 import random
 
 import utilities as u
-import classes, utilityClasses
+import classes
+import utilityClasses as uC
 
 # Global variables
 
@@ -45,7 +46,6 @@ def clearScreen():
 	"""Clear the screen xD"""
 	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 
-
 def main():
 	global DISPLAYSURF, IMAGESDICT, FPS, OFFSETX, OFFSETY
 	FPS = 60
@@ -68,15 +68,15 @@ def main():
 	pygame.display.set_caption('Space Pirates') # Make name for window
 
 	# Make some general instances of stuff
-	scrollObj = utilityClasses.MouseScroll() # Make a mouse-scroll instance
+	scrollObj = uC.MouseScroll() # Make a mouse-scroll instance
 
-	clickRect = utilityClasses.ClickRect() # Rect to check what we are clicking
+	clickRect = uC.ClickRect() # Rect to check what we are clicking
 
 	planets = makeSystem()
-	clickObj = utilityClasses.Clickable(planets)
+	clickObj = uC.Clickable(planets)
 
 	clickedObject = None
-	textBox = utilityClasses.TextBox()
+	textBox = uC.TextBox()
 
 	clearScreen()
 
@@ -118,7 +118,7 @@ def main():
 
 		for planet in planets:
 			if (not clickRect.rect.collidelist([planet])) and clickRect:
-				textBox = utilityClasses.TextBox(planet.name, pygame.Rect(planet.rect))
+				textBox = uC.TextBox(planet.name, pygame.Rect(planet.rect))
 				clickedObject = planet
 		
 			planet.draw(DISPLAYSURF, OFFSETX, OFFSETY) # Draw all the planets

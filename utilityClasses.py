@@ -67,7 +67,7 @@ class TextBox():
 	def draw(self, surface, OFFSETX, OFFSETY):
 		"""Draws the textbox to the surface."""
 		drawPosition = (self.pos.x + OFFSETX, self.pos.y + OFFSETY) 
-		surface.blit(self.font.render(self.text, 0, (200, 0, 0)), drawPosition) # Blits the text to the surface
+		surface.blit(self.font.render(self.text, 0, (200, 200, 200)), drawPosition) # Blits the text to the surface
 
 class Clickable():
 	"""Class of clickable objects."""

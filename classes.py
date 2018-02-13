@@ -1,8 +1,9 @@
 # Python classes for Space Pirate
 import pygame
-import utilities as u
-
 import random
+
+import utilities as u
+import utilityClasses as uC
 
 class Entity():
 	"""Abstract entity class."""
