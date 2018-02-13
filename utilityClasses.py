@@ -1,6 +1,9 @@
 # Utility Classes
 import pygame
 
+import cfg
+
+
 class MouseScroll():
 	"""Class to scroll the camera."""
 	def __init__(self, threshold = 35):
@@ -64,10 +67,10 @@ class TextBox():
 		self.font = pygame.font.Font(None, 25) # Font
 		self.pos = pos
 
-	def draw(self, surface, OFFSETX, OFFSETY):
+	def draw(self):
 		"""Draws the textbox to the surface."""
-		drawPosition = (self.pos.x + OFFSETX, self.pos.y + OFFSETY) 
-		surface.blit(self.font.render(self.text, 0, (200, 200, 200)), drawPosition) # Blits the text to the surface
+		drawPosition = (self.pos.x + cfg.OFFSETX, self.pos.y + cfg.OFFSETY) 
+		cfg.DISPLAYSURF.blit(self.font.render(self.text, 0, (200, 200, 200)), drawPosition) # Blits the text to the surface
 
 class Clickable():
 	"""Class of clickable objects."""

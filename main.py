@@ -7,33 +7,32 @@ import utilities as u
 import classes
 import utilityClasses as uC
 
-# Global variables
+import cfg # Terrible way to do it apparently
 
 def handleScrolling(mouseButtonsPressed, scrollObj):
 	"""Handles scrolling and sets global offset variables."""
-	global OFFSETX, OFFSETY
 	# Scroll if we need to
+	global OFFSETX, OFFSETY
 	if mouseButtonsPressed[0]:
 		scrollObj.update(pygame.math.Vector2(pygame.mouse.get_rel()))
 	else:
 		scrollObj.reset()
 
-
 	if scrollObj:
 		# We are going to scroll, scroll
-		OFFSETX += scrollObj.relativeDrag().x
-		OFFSETY += scrollObj.relativeDrag().y
+		cfg.OFFSETX += scrollObj.relativeDrag().x
+		cfg.OFFSETY += scrollObj.relativeDrag().y
 
 def makeSystem():
 	"""Makes a little planet system."""
-	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), IMAGESDICT['earth'].get_rect().size))]
+	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
 
 def draw():
 	"""Draw phase of the game."""
-	DISPLAYSURF.blit(IMAGESDICT['space'], pygame.Rect((0 + OFFSETX/20, 0 + OFFSETY/20), (100, 100))) # Get a smooth backdrop
+	cfg.DISPLAYSURF.blit(cfg.IMAGESDICT['space'], pygame.Rect((0 + cfg.OFFSETX/20, 0 + cfg.OFFSETY/20), (100, 100))) # Get a smooth backdrop
 
 def initializeModules():
 	"""Initiazlises the modules we are going to use."""
@@ -47,25 +46,12 @@ def clearScreen():
 	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 
 def main():
-	global DISPLAYSURF, IMAGESDICT, FPS, OFFSETX, OFFSETY
-	FPS = 60
-
 	# Global camera offset
-	OFFSETX = 0
-	OFFSETY = 0
 
-	# Initialize clock
 	fpsClock = pygame.time.Clock()
 
 	# Initialize pygame modules
 	initializeModules()
-
-	# Images to use
-	IMAGESDICT = {	'space': pygame.image.load('.\\art\\space.jpg'),
-					'earth': pygame.image.load('.\\art\\earth1.png')}
-
-	DISPLAYSURF = pygame.display.set_mode((640, 448)) # Make a display
-	pygame.display.set_caption('Space Pirates') # Make name for window
 
 	# Make some general instances of stuff
 	scrollObj = uC.MouseScroll() # Make a mouse-scroll instance
@@ -121,19 +107,18 @@ def main():
 				textBox = uC.TextBox(planet.name, pygame.Rect(planet.rect))
 				clickedObject = planet
 		
-			planet.draw(DISPLAYSURF, OFFSETX, OFFSETY) # Draw all the planets
+			planet.draw() # Draw all the planets
 
 		# Draw info box
 		# clickedObject = None
 
-		textBox.draw(DISPLAYSURF, OFFSETX, OFFSETY)
+		textBox.draw()
 		#________LAST PART OF CYCLE________
 		# Reset the click
 		clickRect.isActive = False
 
 		pygame.display.update()
-		fpsClock.tick(FPS)
+		fpsClock.tick(cfg.FPS)
 
 if __name__ == '__main__':
     main()
-

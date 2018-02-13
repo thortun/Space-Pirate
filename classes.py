@@ -5,6 +5,8 @@ import random
 import utilities as u
 import utilityClasses as uC
 
+import cfg
+
 class Entity():
 	"""Abstract entity class."""
 	def __init__(self, rect = pygame.rect.Rect(0, 0, 0, 0)):
@@ -29,10 +31,11 @@ class Planet(CelestialObject):
 	def __str__(self):
 		return 'Planet: ' + self.name
 
-	def draw(self, surface, OFFSETX, OFFSETY):
+	def draw(self):
 		"""Draws the planet to the surface."""
-		drawPosition = (int(self.rect.center[0] + OFFSETX), int(self.rect.center[1] + OFFSETY))
-		pygame.draw.circle(surface, self.color, drawPosition, self.rect.width/2)
+
+		drawPosition = (int(self.rect.center[0] + cfg.OFFSETX), int(self.rect.center[1] + cfg.OFFSETY))
+		pygame.draw.circle(cfg.DISPLAYSURF, self.color, drawPosition, self.rect.width/2)
 
 	def click(self):
 		"""Click on a planet."""
@@ -48,7 +51,7 @@ class Star(CelestialObject):
 	def __str__(self):
 		return 'Star: ' + self.name
 
-	def draw(self, surface, OFFSETX, OFFSETY):
+	def draw(self):
 		"""Draws the planet to the surface."""
-		drawPosition = (int(self.rect.center[0] + OFFSETX), int(self.rect.center[1] + OFFSETY))
-		pygame.draw.circle(surface, self.color, drawPosition, self.rect.width/2)
+		drawPosition = (int(self.rect.center[0] + cfg.OFFSETX), int(self.rect.center[1] + cfg.OFFSETY))
+		pygame.draw.circle(cfg.DISPLAYSURF, self.color, drawPosition, self.rect.width/2)

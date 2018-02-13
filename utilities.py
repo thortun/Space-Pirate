@@ -1,7 +1,10 @@
 # Utilities
 import pygame, sys
-from pygame import *
+from pygame.locals import *
 import random
+
+import cfg
+
 
 def checkTermination(buttonsPressed):
 	"""Checks if we should terminate the game based
