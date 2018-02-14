@@ -48,8 +48,7 @@ def clearScreen():
 	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 
 def main():
-	# Global camera offset
-
+	
 	fpsClock = pygame.time.Clock()
 
 	# Initialize pygame modules

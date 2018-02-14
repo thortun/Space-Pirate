@@ -6,7 +6,7 @@ FPS = 60
 OFFSETX = 0
 OFFSETY = 0
 
-ZOOM = 1 # zoom scale
+ZOOM = 1 # Zoom scale
 
 # Images to use
 IMAGESDICT = {	'space': pygame.image.load('.\\art\\space.jpg'),
