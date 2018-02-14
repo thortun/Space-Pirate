@@ -1,8 +1,8 @@
 # Utility Classes
 import pygame
 
+# Local modules
 import cfg
-
 
 class MouseScroll():
 	"""Class to scroll the camera."""
@@ -88,4 +88,3 @@ class Clickable():
 			if not clickRect.rect.collidelist([obj.rect]):
 				return obj
 		return None
-

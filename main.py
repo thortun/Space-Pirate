@@ -21,18 +21,18 @@ def handleScrolling(mouseButtonsPressed, scrollObj):
 		# We are going to scroll move all entities
 		for entity in cfg.ENTITIES:
 			# Move planets:
-			if isinstance(entity, classes.Planet):
+			if isinstance(entity, classes.CelestialObject):
 				entity.move((scrollObj.relativeDrag().x, scrollObj.relativeDrag().y))
 			# Move background
 			if isinstance(entity, classes.Background):
-				entity.move((float(scrollObj.relativeDrag().x/10), float(scrollObj.relativeDrag().y/10)))
+				entity.move((scrollObj.relativeDrag().x/10, scrollObj.relativeDrag().y/10))
 
 def makeSystem():
 	"""Makes a little planet system."""
 	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
 			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
-			#classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Star(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
 
 def draw():
 	"""Draw phase of the game."""
@@ -82,7 +82,6 @@ def main():
 	clearScreen() # Shitty way to clear cmd
 
 	while True:
-		print cfg.ENTITIES[0].rect.topleft
 		# Main game loop
 		pygame.event.pump() # Get stuff from keyboard and stuff
 		mouseButtonsPressed = pygame.mouse.get_pressed() # Which mouse buttons are pressed
