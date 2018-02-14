@@ -47,3 +47,7 @@ def randomLineFromFile(filepath):
 		if i == r:
 			return line.replace('\n', '')
 	return 'NONAME'
+
+def clearScreen():
+	"""Clear the screen xD"""
+	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'

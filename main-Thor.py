@@ -27,13 +27,12 @@ def handleScrolling(mouseButtonsPressed, scrollObj):
 			if isinstance(entity, classes.Background):
 				entity.move((scrollObj.relativeDrag().x/10, scrollObj.relativeDrag().y/10))
 
-			if isinstance(entity, classes.Ship):
-				entity.move((scrollObj.relativeDrag().x, scrollObj.relativeDrag().y))
-
 def makeSystem():
 	"""Makes a little planet system."""
 	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Star(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
 
 def draw():
 	"""Draw phase of the game."""
@@ -50,8 +49,13 @@ def initializeModules():
 	if not pygame.font.get_init():
 		print 'pygame.font failed to initialize'
 
+def clearScreen():
+	"""Clear the screen xD"""
+	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+
 def main():
-	
+	# Global camera offset
+
 	fpsClock = pygame.time.Clock()
 
 	# Initialize pygame modules
@@ -75,11 +79,7 @@ def main():
 	clickedObject = None
 	textBox = uC.TextBox()
 
-	ship = classes.Ship()
-	ship.endPoint = cfg.ENTITIES[1]
-	cfg.ENTITIES.append(ship)
-
-	u.clearScreen() # Shitty way to clear cmd
+	clearScreen() # Shitty way to clear cmd
 
 	while True:
 		# Main game loop
@@ -100,13 +100,12 @@ def main():
 				# If we press the mouse and we are not scrolling,
 				# make a rect object to check what we clicked
 				if event.button is 1: # Left click
-					cfg.OFFSETX, cfg.OFFSETY = 0, 0
-
+					None
+					# clickedObject = clickObj.click(event.pos)
 				if event.button is 3: # Right click
 					cfg.ZOOM = 1
 					clickedObj = None
-					ship.endPoint = cfg.ENTITIES[2]
-
+					cfg.OFFSETX, cfg.OFFSETY = 0, 0
 
 				# Button 4 is scrolling backwards
 				# Button 5 is scrolling forwards
@@ -140,9 +139,10 @@ def main():
 
 		# Reset the click
 		clickedObject = None
-		ship.moveToEndPoint()
+
 		# ________DRAW PHASE________
 		draw()
+
 		#________LAST PART OF CYCLE________
 		# Reset the click
 

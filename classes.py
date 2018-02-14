@@ -71,3 +71,34 @@ class Background(Entity):
 
 	def draw(self):
 		cfg.DISPLAYSURF.blit(self.image, Entity.getRect(self))
+
+
+class Ship(ClickableEntity):
+	"""Ship class."""
+	def __init__(self, rect = pygame.rect.Rect(0, 0, 30, 20)):
+		Entity.__init__(self, rect)
+		# More variables
+		self.endPoint = self
+		self.startPoint = self
+
+	def setEndPoint(self, endPoint):
+		"""Sets the destination for the ship."""
+		self.endPoint = endPoint
+
+	def setStartPoint(self, startPoint):
+		"""Sets the start point of the ship."""
+		self.startPoint = startPoint
+
+	def move(self, shift):
+		"""Moves the ship in the direction indicated."""
+		self.position += shift
+
+	def moveToEndPoint(self):
+		"""Moves the ship towards the object."""
+		direction = pygame.math.Vector2(-self.position.x + self.endPoint.position.x, -self.position.y + self.endPoint.position.y)
+		self.move((0.005*direction[0], 0.005*direction[1]))
+
+	def draw(self):
+		"""Draws the ship."""
+		pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), self.position, self.endPoint.position)
+		pygame.draw.rect(cfg.DISPLAYSURF, (200, 60, 60), pygame.rect.Rect(self.position, (30, 20)))
