@@ -2,11 +2,7 @@ import pygame
 
 FPS = 60
 
-# Global Camera Offset
-OFFSETX = 0
-OFFSETY = 0
-
-ZOOM = 1 # Zoom scale
+ZOOM = 1 # zoom scale
 
 # Images to use
 IMAGESDICT = {	'space': pygame.image.load('.\\art\\space.jpg'),
@@ -16,6 +12,10 @@ SCREENWIDTH = 640
 SCREENHEIGHT = 448
 
 SCREENCENTER = (SCREENWIDTH//2, SCREENHEIGHT//2)
+
+OFFSETX, OFFSETY = 0, 0
+
+ENTITIES = [] # List of current entities
 
 DISPLAYSURF = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT)) # Make a display
 pygame.display.set_caption('Space Pirates') # Make name for window

@@ -18,23 +18,29 @@ def handleScrolling(mouseButtonsPressed, scrollObj):
 		scrollObj.reset()
 
 	if scrollObj:
-		# We are going to scroll, scroll
-		cfg.OFFSETX += scrollObj.relativeDrag().x
-		cfg.OFFSETY += scrollObj.relativeDrag().y
+		# We are going to scroll move all entities
+		for entity in cfg.ENTITIES:
+			# Move planets:
+			if isinstance(entity, classes.CelestialObject):
+				entity.move((scrollObj.relativeDrag().x, scrollObj.relativeDrag().y))
+			# Move background
+			if isinstance(entity, classes.Background):
+				entity.move((scrollObj.relativeDrag().x/10, scrollObj.relativeDrag().y/10))
 
 def makeSystem():
 	"""Makes a little planet system."""
 	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
-			#classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			#classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
+			classes.Star(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
 
 def draw():
 	"""Draw phase of the game."""
-	cfg.DISPLAYSURF.blit(cfg.IMAGESDICT['space'], pygame.Rect((0 + cfg.OFFSETX/20, 0 + cfg.OFFSETY/20), (100, 100))) # Get a smooth backdrop
+	# Draw all entities
+	for entity in cfg.ENTITIES:
+		entity.draw()
 	# Draw center of screen
 	pygame.draw.circle(cfg.DISPLAYSURF, (255, 0, 0), cfg.SCREENCENTER, 2)
-	# cfg.DISPLAYSURF, self.color, drawPosition, int(cfg.ZOOM*self.rect.width/2)
 
 def initializeModules():
 	"""Initiazlises the modules we are going to use."""
@@ -59,8 +65,15 @@ def main():
 
 	clickRect = uC.ClickRect() # Rect to check what we are clicking
 
-	planets = makeSystem()
-	clickObj = uC.Clickable(planets)
+
+	# MAKE SOME SPACE
+	# Add the background
+	cfg.ENTITIES = [classes.Background(cfg.IMAGESDICT['space'])]
+	# Add some planets
+	for planet in makeSystem():
+		cfg.ENTITIES.append(planet)
+
+	clickObj = uC.Clickable(cfg.ENTITIES)
 
 	clickedObject = None
 	textBox = uC.TextBox()
@@ -119,32 +132,16 @@ def main():
 
 		# ________UPDATE GAME STATE________
 		pygame.mouse.get_rel() 	# Update scroll object
-		if clickedObject is not None:
+		# Click on the entity if it is clickable
+		if clickedObject is not None and isinstance(clickedObject, classes.ClickableEntity):
 			clickedObject.click()
+
 		# Reset the click
 		clickedObject = None
 
 		# ________DRAW PHASE________
 		draw()
 
-		for planet in planets:
-			if (not clickRect.rect.collidelist([planet])) and clickRect:
-				textBox = uC.TextBox(planet.name, pygame.Rect(planet.rect))
-				clickedObject = planet
-		
-			planet.draw() # Draw all the planets
-
-		# Draw lines from center to planet
-		# line(Surface, color, start_pos, end_pos, width=1)
-		for planet in clickObj.objectList:
-			pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), (cfg.SCREENCENTER[0] , cfg.SCREENCENTER[1] )\
-				, (planet.rect.center[0] + cfg.OFFSETX, planet.rect.center[1] + cfg.OFFSETY), 2)
-
-
-		# Draw info box
-		# clickedObject = None
-
-		textBox.draw()
 		#________LAST PART OF CYCLE________
 		# Reset the click
 
