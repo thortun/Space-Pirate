@@ -32,30 +32,24 @@ def handleScrolling(mouseButtonsPressed, scrollObj):
 
 def makeSystem():
 	"""Makes a little planet system."""
-	return [classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size)),
-			classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)), cfg.IMAGESDICT['earth'].get_rect().size))]
+	P = []
+	for _ in xrange(4):
+		planet = classes.Planet(pygame.Rect((random.randint(50, 600), random.randint(50, 400)),(40, 40)))
+		P.append(planet)
+	return P
 
 def draw():
 	"""Draw phase of the game."""
 	# Draw all entities
 	for entity in cfg.ENTITIES:
 		entity.draw()
-	# Draw center of screen
-	pygame.draw.circle(cfg.DISPLAYSURF, (255, 0, 0), cfg.SCREENCENTER, 2)
-
-def initializeModules():
-	"""Initiazlises the modules we are going to use."""
-	pygame.init() # Initialize the game
-	pygame.font.init() # Initialize fonts
-	if not pygame.font.get_init():
-		print 'pygame.font failed to initialize'
 
 def main():
 	
 	fpsClock = pygame.time.Clock()
 
 	# Initialize pygame modules
-	initializeModules()
+	u.initializeModules()
 
 	# Make some general instances of stuff
 	scrollObj = uC.MouseScroll() # Make a mouse-scroll instance
@@ -76,10 +70,13 @@ def main():
 	textBox = uC.TextBox()
 
 	ship = classes.Ship()
-	ship.endPoint = cfg.ENTITIES[1]
+	ship.destinations = cfg.ENTITIES[1:]
+	ship.currentDestination = 0
 	cfg.ENTITIES.append(ship)
 
 	u.clearScreen() # Shitty way to clear cmd
+
+
 
 	while True:
 		# Main game loop
@@ -100,13 +97,10 @@ def main():
 				# If we press the mouse and we are not scrolling,
 				# make a rect object to check what we clicked
 				if event.button is 1: # Left click
-					cfg.OFFSETX, cfg.OFFSETY = 0, 0
+					clickObj.click(event.pos)
 
 				if event.button is 3: # Right click
-					cfg.ZOOM = 1
-					clickedObj = None
-					ship.endPoint = cfg.ENTITIES[2]
-
+					ship.nextDest()
 
 				# Button 4 is scrolling backwards
 				# Button 5 is scrolling forwards
@@ -114,20 +108,32 @@ def main():
 					# Zoom the camera
 					cfg.ZOOM = cfg.ZOOM*1.2
 					# Move the planets
-					for planet in clickObj.objectList:
-						moveVector = pygame.math.Vector2(cfg.SCREENCENTER[0] - planet.rect.center[0] - cfg.OFFSETX, cfg.SCREENCENTER[1] - planet.rect.center[1] - cfg.OFFSETX)
-						moveVector.normalize()
-						planet.move(moveVector)
+					for ent in cfg.ENTITIES[1:]:
+						moveVector = pygame.math.Vector2( ent.position.x - cfg.SCREENCENTER[0], ent.position.y - cfg.SCREENCENTER[1])
+						moveVector = moveVector.normalize()
+						moveVector.length()
+						ent.move(10*moveVector)
 
 				if event.button is 5:
 					# Zoom the camera
 					cfg.ZOOM = cfg.ZOOM/1.2
-					# Move the planets
-
+					for ent in cfg.ENTITIES[1:]:
+						moveVector = pygame.math.Vector2( ent.position.x - cfg.SCREENCENTER[0], ent.position.y - cfg.SCREENCENTER[1])
+						moveVector = moveVector.normalize()
+						ent.move(-10*moveVector)
 
 			if event.type is MOUSEBUTTONUP:
 				if event.button is 1 and not scrollObj: # Left click release
 					clickedObject = clickObj.click(event.pos)
+
+			if event.type is KEYDOWN:
+				if event.key is K_UP:
+					# Zoom in
+					cfg.ZOOM = cfg.ZOOM*1.2
+
+				if event.key is K_DOWN:
+					# Zoom out
+					None
 
 		# Handle scrolling
 		handleScrolling(mouseButtonsPressed, scrollObj)

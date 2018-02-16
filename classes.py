@@ -66,39 +66,52 @@ class Star(CelestialObject):
 
 class Background(Entity):
 	def __init__(self, image = None):
-		Entity.__init__(self, image.get_rect())
+		Entity.__init__(self, pygame.rect.Rect(0, 0, 0, 0))
 		self.image = image
 
 	def draw(self):
-		cfg.DISPLAYSURF.blit(self.image, Entity.getRect(self))
-
+		cfg.DISPLAYSURF.blit(self.image, self.getRect())
 
 class Ship(ClickableEntity):
 	"""Ship class."""
 	def __init__(self, rect = pygame.rect.Rect(0, 0, 30, 20)):
 		Entity.__init__(self, rect)
 		# More variables
-		self.endPoint = self
-		self.startPoint = self
+		self.destinations = [] # List of object indicating destinations
+		currentDestination = None # Index of current destination
 
-	def setEndPoint(self, endPoint):
+	def addDest(self, dest):
 		"""Sets the destination for the ship."""
-		self.endPoint = endPoint
-
-	def setStartPoint(self, startPoint):
-		"""Sets the start point of the ship."""
-		self.startPoint = startPoint
+		self.destinations.append(dest)
 
 	def move(self, shift):
 		"""Moves the ship in the direction indicated."""
 		self.position += shift
 
+	def nextDest(self):
+		"""Returns the next destination.
+		Return the first destination if we are currently
+		at the last."""
+		self.currentDestination = (self.currentDestination + 1) % len(self.destinations)
+		return self.destinations[self.currentDestination]
+
 	def moveToEndPoint(self):
 		"""Moves the ship towards the object."""
-		direction = pygame.math.Vector2(-self.position.x + self.endPoint.position.x, -self.position.y + self.endPoint.position.y)
-		self.move((0.005*direction[0], 0.005*direction[1]))
+		direction = pygame.math.Vector2(-self.position.x + self.getDest().position.x, -self.position.y + self.getDest().position.y)
+		if direction.length() < 1:
+			return
+		else:
+			direction = direction.normalize()
+			self.move((direction[0], direction[1]))
 
 	def draw(self):
 		"""Draws the ship."""
-		pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), self.position, self.endPoint.position)
+		pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), self.position, self.getDest().position)
 		pygame.draw.rect(cfg.DISPLAYSURF, (200, 60, 60), pygame.rect.Rect(self.position, (30, 20)))
+
+	def getDest(self):
+		"""Gets the current destination of the ship."""
+		if self.destinations and self.currentDestination is not None:
+			return self.destinations[self.currentDestination]
+		else:
+			return None

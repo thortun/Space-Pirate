@@ -6,6 +6,13 @@ import random
 import cfg
 
 
+def initializeModules():
+	"""Initiazlises the modules we are going to use."""
+	pygame.init() # Initialize the game
+	pygame.font.init() # Initialize fonts
+	if not pygame.font.get_init():
+		print 'pygame.font failed to initialize'
+
 def checkTermination(buttonsPressed):
 	"""Checks if we should terminate the game based
 	on which buttons are pressed."""
