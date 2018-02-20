@@ -1,6 +1,7 @@
 # Python classes for Space Pirate
 import pygame
 import random
+from pygame.locals import *
 
 import utilities as u
 import utilityClasses as uC
@@ -12,14 +13,19 @@ class Entity():
 	def __init__(self, rect = pygame.rect.Rect(0, 0, 0, 0)):
 		self.rect = rect # Entity has a rect associated with it
 		# Need to store the position to be able to move object with more than integer precision
-		self.position = pygame.math.Vector2(self.rect.left, self.rect.top)
+		self.position = pygame.math.Vector2(self.rect.topleft)
 	def move(self, shift):
 		"""Moves by the touple 'shift'."""
 		self.position += pygame.math.Vector2(shift)
+		self.rect.topleft = self.position # Set the position
 
 	def getRect(self):
 		"""Returns the rect for drawing."""
 		return pygame.rect.Rect((int(self.position[0]), int(self.position[1])), self.rect.size)
+
+	def action(self, event):
+		"""Abstract function to handle events for selected object."""
+		return None
 
 class ClickableEntity(Entity):
 	def __init__(self, rect = pygame.rect.Rect(0, 0, 0, 0)):
@@ -84,29 +90,29 @@ class Ship(ClickableEntity):
 		"""Sets the destination for the ship."""
 		self.destinations.append(dest)
 
-	def move(self, shift):
-		"""Moves the ship in the direction indicated."""
-		self.position += shift
-
 	def nextDest(self):
 		"""Returns the next destination.
 		Return the first destination if we are currently
 		at the last."""
-		self.currentDestination = (self.currentDestination + 1) % len(self.destinations)
-		return self.destinations[self.currentDestination]
+		if self.destinations:
+			self.currentDestination = (self.currentDestination + 1) % len(self.destinations)
+			return self.destinations[self.currentDestination]
+		else:
+			return None
 
 	def moveToEndPoint(self):
 		"""Moves the ship towards the object."""
-		direction = pygame.math.Vector2(-self.position.x + self.getDest().position.x, -self.position.y + self.getDest().position.y)
-		if direction.length() < 1:
-			return
-		else:
-			direction = direction.normalize()
-			self.move((direction[0], direction[1]))
+		if self.destinations:
+			direction = pygame.math.Vector2(-self.position.x + self.getDest().position.x, -self.position.y + self.getDest().position.y)
+			if direction.length() < 1:
+				self.nextDest()
+				return
+			else:
+				direction = direction.normalize()
+				self.move((direction.x, direction.y))
 
 	def draw(self):
 		"""Draws the ship."""
-		pygame.draw.line(cfg.DISPLAYSURF, (255, 0, 0), self.position, self.getDest().position)
 		pygame.draw.rect(cfg.DISPLAYSURF, (200, 60, 60), pygame.rect.Rect(self.position, (30, 20)))
 
 	def getDest(self):
@@ -115,3 +121,35 @@ class Ship(ClickableEntity):
 			return self.destinations[self.currentDestination]
 		else:
 			return None
+
+	def click(self):
+		print "Clicked on ship"
+
+	def action(self, event):
+		"""Handles what happens to the ship given an event."""
+		if event.type is MOUSEBUTTONDOWN:
+			# Mouse 2 click: Add destination
+			if event.button is 3:
+				# Add whatever we clicked on to the list of destinations
+				self.destinations.append(u.click(event.pos))
+
+class Button(ClickableEntity):
+	"""Clickable Button."""
+	def __init__(self, size = (0, 0), position = (0, 0)):
+		"""Makes a button."""
+		Entity.__init__(self, pygame.rect.Rect(position, size))
+
+	def setPosition(self, position):
+		"""Sets the position of the button."""
+		self.position = position # Set the position variable
+		self.rect.topleft = position # Set the position of the rectangle variable
+
+	def click(self):
+		"""Clicks the button. This is where we need 
+		to have a lot of flexibility of the button.
+		"""
+		print "Clicked on ", self
+
+	def draw(self):
+		"""Draws the button to the display."""
+		pygame.draw.rect(cfg.DISPLAYSURF, (0, 200, 100), self.rect)

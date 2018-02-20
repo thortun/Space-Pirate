@@ -10,13 +10,14 @@ class MouseScroll():
 		self.dragged = pygame.math.Vector2(0.0, 0.0) # How far we have dragged the mouse while holding down mouse1
 		self.activationThreshold = threshold # How far we need to drag the mouse to start scrolling
 		self.lastDragged = pygame.math.Vector2(0.0, 0.0) # The last position of the mouse, to help scroll
+		self.distanceDragged = 0
 
 	def __nonzero__(self):
 		"""Bool to check if we should start scrolling.
 		Returns TRUE if we have scrolled far enough while
 		mouse1 is pressed.
 		"""
-		return self.dragged.length() > self.activationThreshold
+		return self.distanceDragged > self.activationThreshold
 
 	def __str__(self):
 		return 'MouseScroll instance'
@@ -25,24 +26,17 @@ class MouseScroll():
 		"""Resets the scroll."""
 		self.lastDragged = pygame.math.Vector2(0.0, 0.0)
 		self.dragged = pygame.math.Vector2(0.0, 0.0)
+		self.distanceDragged = 0
 
 	def update(self, vector):
 		"""Updates how far the mouse has scrolled."""
 		self.lastDragged = pygame.math.Vector2(self.dragged) # Update the previous drag
 		self.dragged += vector # Update how far we scrolled
+		self.distanceDragged += self.relativeDrag().length()
 
 	def relativeDrag(self):
 		"""Returns how far we have scrolled since last update."""
 		return self.dragged - self.lastDragged
-
-class ClickRect():
-	"""Class to see what we clicked."""
-	def __init__(self, rect = pygame.Rect(0, 0, 0, 0)):
-		self.isActive = False
-		self.rect = rect
-
-	def __nonzero__(self):
-		return self.isActive
 
 class Node():
 	"""General Node class."""
@@ -63,28 +57,37 @@ class Node():
 class TextBox():
 	"""Textbox class to display information."""
 	def __init__(self, text = '', pos = pygame.Rect(0, 0, 0, 0)):
-		self.text = text
+		self.text = text.split('\n')
 		self.font = pygame.font.Font(None, 25) # Font
 		self.pos = pos
 
+	def __nonzero__(self):
+		pass
+
 	def draw(self):
 		"""Draws the textbox to the surface."""
-		drawPosition = (self.pos.x + cfg.OFFSETX, self.pos.y + cfg.OFFSETY) 
-		cfg.DISPLAYSURF.blit(self.font.render(self.text, 0, (200, 200, 200)), drawPosition) # Blits the text to the surface
+		textSize = [0, 0]
+		numLines = 0
+		# Find the largest text size
+		for line in self.text:
+			if self.font.size(line)[0] > textSize[0]:
+				textSize[0] = self.font.size(line)[0]
+			if self.font.size(line)[1] > textSize[1]:
+				textSize[1] = self.font.size(line)[1]
+			numLines += 1
 
-class Clickable():
-	"""Class of clickable objects."""
-	def __init__(self, objectList):
-		self.objectList = objectList
+		backRect = pygame.rect.Rect(self.pos.topleft, (textSize[0], textSize[1]*numLines)) # Make the background rectangle
+		pygame.draw.rect(cfg.DISPLAYSURF, (255, 255, 255), backRect) # Blit the white background
+		pygame.draw.rect(cfg.DISPLAYSURF, (0, 0, 255), pygame.rect.Rect(self.pos[0] - 3, self.pos[1] - 3, textSize[0] + 6, textSize[1]*numLines + 6), 5)
+		for i, line in enumerate(self.text):
+			cfg.DISPLAYSURF.blit(self.font.render(line, 0, (200, 200, 0)), (self.pos.x, self.pos.y + 18*i)) # Blits the text to the surface
 
-	def click(self, mousePosition):
-		"""Returns the object that we clicked on
-		when clicking on mousePosition.
-		 - mousePosition should be a touple
-		 - Returns the object clicked, and None if nothing was clicked
-		"""
-		clickRect = ClickRect(pygame.Rect((mousePosition[0] - cfg.OFFSETX, mousePosition[1] - cfg.OFFSETY), (10, 10))) # Create a click object
-		for obj in self.objectList:
-			if not clickRect.rect.collidelist([obj.rect]):
-				return obj
-		return None
+class Layer():
+	"""Layer class. Each layer should contain
+	a set of entities. When the player interacts with 
+	the game, we search through layers to make sure that
+	we do not interact with object behind stuff.
+	"""
+	def __init__(self, layerNumber):
+		"""Initiazlies the layer."""
+		self.layerNumber = layerNumber

@@ -5,6 +5,16 @@ import random
 
 import cfg
 
+def playMusic(filename):
+	"""Plays the music from the path 'filename'.
+	Plays 'weightlessness if we can not open the file.
+	"""
+	try:
+		pygame.mixer.music.load(filename)
+	except pygame.error:
+		pygame.mixer.music.load('.\\music\\weightlessness.mp3')
+	pygame.mixer.music.set_volume(0.5)
+	pygame.mixer.music.play()
 
 def initializeModules():
 	"""Initiazlises the modules we are going to use."""
@@ -47,7 +57,7 @@ def randomLineFromFile(filepath):
 		fileLength += 1 # Iterate fileLength
 
 	# Make a variable to pick a random line
-	r = random.randint(0, fileLength)
+	r = random.randint(0, fileLength - 1)
 	fileID.seek(0) # Go back to the start of the file
 	# Find the line corresponding to r
 	for i, line in enumerate(fileID):
@@ -58,3 +68,32 @@ def randomLineFromFile(filepath):
 def clearScreen():
 	"""Clear the screen xD"""
 	print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+
+
+def click(mousePosition):
+	"""Handles clicking on any position on the screen."""
+	clickRect = pygame.rect.Rect(mousePosition, (5, 5))
+	# Start with foreground
+	for thing in cfg.LAYERS['buttons']:
+		if not clickRect.collidelist([thing]):
+			# If we click it, click it
+			thing.click()
+			# Return which object we clicked
+			return thing
+
+	# Next is the foreground
+	for thing in cfg.LAYERS['foreground']:
+		if not clickRect.collidelist([thing]):
+			# If we click it, click it
+			thing.click()
+			# Return which object we clicked
+			return thing
+
+	# Next is the middleground
+	for thing in cfg.LAYERS['middleground']:
+		if not clickRect.collidelist([thing]):
+			# If we click it, click it
+			thing.click()
+			# Return which object we clicked
+			return thing
+			
