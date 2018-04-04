@@ -1,2 +1,2 @@
 # Space-Pirate
-Sickest game EU
+Messing around with the pygame module
